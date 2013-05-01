@@ -1,0 +1,12 @@
+<div ng-controller="MyCtrl2">
+<p>This is the partial for view 2.</p>
+<p>
+  Showing of 'interpolate' filter:
+  {{ 'Current version is v%VERSION%.' | interpolate }}
+</p>
+
+<div ng-repeat="project in projects.data">
+  <span>{{project.title}}</span>
+</div>
+
+</div>
