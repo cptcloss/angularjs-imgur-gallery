@@ -11,18 +11,25 @@ angular.module('myApp.services', ['ngResource']).
     
     $http.defaults.useXDomain = true;
     $http.defaults.headers.common['Authorization'] = 'Client-ID 0823c1380a41001';
-    var images = {};
+
     var albumsService = {};
-    var albums = $resource('https://api.imgur.com/3/account/somethingthatdescribesme/albums').get();
+    var albums = [];
+    var albumList = $resource('https://api.imgur.com/3/account/somethingthatdescribesme/albums').get(function () {
+        albumList.data.forEach(function (album) {
+            album = $resource('https://api.imgur.com/3/account/somethingthatdescribesme/album/:id',{id:album.id}).get(function () {
+                albums.push(album.data);
+            });
+        });
+    });
+
+    albumsService.albumList = function() {
+        return albumList;
+    };
 
     albumsService.albums = function() {
         return albums;
-    };
-   
+    };   
 /*
-    
-
-
     albumsService.getAlbumImages = function() {
         $resource('https://api.imgur.com/3/account/somethingthatdescribesme/albums',{},{}).get();
     };
@@ -35,19 +42,6 @@ angular.module('myApp.services', ['ngResource']).
         items.splice(index, 1);
     };
 
-    */
-    return albumsService;
-/*
-    return {
-        albums: function() {
-            return $resource('https://api.imgur.com/3/account/somethingthatdescribesme/albums',{},{});
-        }
-        
-        images: function() {
-            return $resource('https://api.imgur.com/3/account/somethingthatdescribesme/album/:id',{},{});
-        }
-        
-    }
 */
-
+    return albumsService;
   });
