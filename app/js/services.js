@@ -53,7 +53,8 @@ angular.module('myApp.services', ['ngResource']).
     
     albumsService.albums = function() {
         return albums;
-    };   
+    };
+    
     albumsService.images = function() {
         return images;
     };

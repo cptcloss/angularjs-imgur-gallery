@@ -11,8 +11,12 @@
         </div>
     </div>
     <div class="row">
-        <div ng-repeat="image in imgur.images()" class="span3">
-            <img src="{{image.link}}" class="img-rounded">
+        <div class="span12">
+            <div class="container" ng-controller="Filters">
+                <div class="item" myDirective check-last ng-repeat="image in imgur.images()">
+                    <img src="{{image.link}}" />
+                </div>
+            </div>
         </div>
     </div>
 </div>
