@@ -11,12 +11,15 @@ angular.module('myApp.services', ['ngResource']).
     
     $http.defaults.useXDomain = true;
     $http.defaults.headers.common['Authorization'] = 'Client-ID 0823c1380a41001';
-
+    
+    //Heavy payload GIF testing
+    //user: somethingthatdescribesme
+    
     var albumsService = {};
     var albums = [];
-    var albumList = $resource('https://api.imgur.com/3/account/somethingthatdescribesme/albums').get(function () {
+    var albumList = $resource('https://api.imgur.com/3/account/gigablox/albums').get(function () {
         albumList.data.forEach(function (album) {
-            album = $resource('https://api.imgur.com/3/account/somethingthatdescribesme/album/:id',{id:album.id}).get(function () {
+            album = $resource('https://api.imgur.com/3/account/gigablox/album/:id',{id:album.id}).get(function () {
                 albums.push(album.data);
             });
         });

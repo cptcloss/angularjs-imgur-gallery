@@ -4,9 +4,10 @@
             <ul class="nav nav-pills">
                 <li ng-repeat="album in imgur.albumList().data"><a href="#">{{album.title}}</a></li>
             </ul>
-            <ul class="nav nav-pills">
-                <li ng-repeat="album in imgur.albums()"><a href="#">{{album.id}}</a></li>
-            </ul>
+            <div ng-repeat="album in imgur.albums()">
+                <img ng-repeat="image in album.images" src="{{image.link}}" class="img-rounded">
+            </div>
+            
         </div>
     </div>
 </div>
