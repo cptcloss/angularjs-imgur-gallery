@@ -44,8 +44,6 @@ angular.module('myApp.services', ['ngResource']).
     
     albumsService.updateStack = function(i) {
         images.length = 0;
-        console.log('dude');
-        console.log(images);
         albums.forEach(function (album, i) {
             if(album.active){
                 albumsService.pushImages(album.images);
