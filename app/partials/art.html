@@ -2,7 +2,7 @@
     <div class="row">
         <div class="span12">
             <ul class="nav nav-pills">
-                <li ng-repeat="album in imgur.albumList().data" ng-class="{active:album.active}" ng-click="updateFilter($index)" id="{{album.id}}">
+                <li ng-repeat="album in imgur.albums()" ng-class="{active:album.active}" ng-click="updateFilter($index)" id="{{album.id}}">
                     <a href="#">
                         {{album.title}}
                     </a>

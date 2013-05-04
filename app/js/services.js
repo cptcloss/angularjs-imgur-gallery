@@ -19,38 +19,20 @@ angular.module('myApp.services', ['ngResource']).
     var albums = [];
     var albumList = $resource('https://api.imgur.com/3/account/gigablox/albums').get(function () {
         albumList.data.forEach(function (album, i) {
-            album.active = ((i==0)?true:false);
-            console.log(album);
             album = $resource('https://api.imgur.com/3/account/gigablox/album/:id',{id:album.id}).get(function () {
+                album.data.active = ((i==0)?true:false);
                 albums.push(album.data);
             });
         });
     });
     
     albumsService.toggleFilter = function(i) {
-        albumList.data[i].active = (albumList.data[i].active===false)?true:false;
+        albums[i].active = (albums[i].active===false)?true:false;
     };
     
-    albumsService.albumList = function() {
-        return albumList;
-    };
-
     albumsService.albums = function() {
         return albums;
     };   
-/*
-    albumsService.getAlbumImages = function() {
-        $resource('https://api.imgur.com/3/account/somethingthatdescribesme/albums',{},{}).get();
-    };
-    
-    albumsService.addItem = function(item) {
-        items.push(item);
-    };
-    albumsService.removeItem = function(item) {
-        var index = items.indexOf(item);
-        items.splice(index, 1);
-    };
 
-*/
     return albumsService;
   });
