@@ -18,13 +18,19 @@ angular.module('myApp.services', ['ngResource']).
     var albumsService = {};
     var albums = [];
     var albumList = $resource('https://api.imgur.com/3/account/gigablox/albums').get(function () {
-        albumList.data.forEach(function (album) {
+        albumList.data.forEach(function (album, i) {
+            album.active = ((i==0)?true:false);
+            console.log(album);
             album = $resource('https://api.imgur.com/3/account/gigablox/album/:id',{id:album.id}).get(function () {
                 albums.push(album.data);
             });
         });
     });
-
+    
+    albumsService.toggleFilter = function(i) {
+        albumList.data[i].active = (albumList.data[i].active===false)?true:false;
+    };
+    
     albumsService.albumList = function() {
         return albumList;
     };
