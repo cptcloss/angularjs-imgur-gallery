@@ -12,6 +12,7 @@ angular.module('myApp.controllers', []).
     
     $scope.updateFilter = function(i) {
         $scope.imgur.toggleFilter(i);
+        $scope.imgur.updateStack(i);
     };
     
   }]);

@@ -8,10 +8,11 @@
                     </a>
                 </li>
             </ul>
-            <div ng-repeat="album in imgur.albums()">
-                <img ng-repeat="image in album.images" src="{{image.link}}" class="img-rounded">
-            </div>
-            
+        </div>
+    </div>
+    <div class="row">
+        <div ng-repeat="image in imgur.images()" class="span3">
+            <img src="{{image.link}}" class="img-rounded">
         </div>
     </div>
 </div>
