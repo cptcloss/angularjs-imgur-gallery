@@ -2,7 +2,7 @@
     <div class="row">
         <div class="span12">
             <ul class="nav nav-pills">
-                <li ng-repeat="album in imgur.albums()" ng-class="{active:album.active}" ng-click="updateFilter($index)" id="{{album.id}}">
+                <li ng-repeat="album in albumsList" ng-class="{active:album.active}" ng-click="updateResults($index)" id="{{album.id}}">
                     <a href="#">
                         {{album.title}}
                     </a>
@@ -12,9 +12,12 @@
     </div>
     <div class="row">
         <div class="span12">
-            <div class="container" ng-controller="Filters">
-                <div class="item" myDirective check-last ng-repeat="image in imgur.images()">
-                    <img src="{{image.link}}" />
+            <div class="container">
+                <div ng-repeat="album in results">
+                    a
+                    <div class="item" myDirective check-last ng-repeat="image in album.images">
+                        <img src="{{image.link}}" />
+                    </div>
                 </div>
             </div>
         </div>
