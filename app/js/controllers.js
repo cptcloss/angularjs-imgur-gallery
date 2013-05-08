@@ -6,13 +6,15 @@ angular.module('myApp.controllers', []).
   controller('CollapseDemoCtrl', ['$scope', function($scope) {
     $scope.isCollapsed = true;
   }])
-  .controller('Filters', ['$scope','$q','Imgur','$http', function($scope, $q, Imgur, $http) {
+  .controller('Filters', ['$scope','$q','Imgur', function($scope, $q, Imgur) {
     
     $scope.albums = [];
+    $scope.albumsList = [];
     $scope.results = [];
+    $scope.resultsList = [];
     
-    $scope.getAlbumsList = function(user, callback) {
-        Imgur.albumsList.get({user:user},    
+    $scope.getAlbumsList = function(callback) {
+        Imgur.albumsList.get(    
             function(value) {
                 $scope.albumsList = value.data;
                 return callback();
@@ -20,22 +22,26 @@ angular.module('myApp.controllers', []).
         );
     }
 
-    $scope.getAlbum = function(user, id, callback) {
-        var promise = Imgur.album.get({user:user, id:id},    
-            function(value) {
+    $scope.getAlbum = function(id, callback) {
+        var promise = Imgur.album.get({id:id}).$promise.then(
+            function( value ){
                 return callback(value.data);
+            },
+            function( error ){
+                
             }
-        );
+        )
         return promise;
     }
 
-    $scope.getAlbums = function(user, callback) {
+    $scope.getAlbums = function(callback) {
         var prom = [];
         $scope.albumsList.forEach(function (obj, i) {
             if((obj.active === true)&&(obj.get === false)){
                 var promise =
-                $scope.getAlbum(user, obj.id, function(value){
+                $scope.getAlbum(obj.id, function(value){
                     $scope.albums.push(value);
+                    obj.get = true;
                 });
                 prom.push(promise);
             }
@@ -46,34 +52,51 @@ angular.module('myApp.controllers', []).
         });
     };
 
-    $scope.pushResults = function(callback) {
-        var deferred = $q.defer();
-        var promise = deferred.promise;
-        promise.then(function () {
-            $scope.albums.forEach(function (obj, i) {
-                if(obj.active === true) {
-                    $scope.results.push(obj);
-                }
-                else {
-                    $scope.results.pop(obj);
-                }
-            });
-        }).then(function () {
+    $scope.pushResultsList = function(callback) {
+        $scope.resultsList.length = 0;
+        var prom = [];
+        $scope.albumsList.forEach(function (obj, i) {
+            if((obj.active === true)&&(obj.get === true)) {
+                var promise = 
+                $scope.resultsList.push(obj.id);
+                prom.push(promise);
+            }
+        });
+        $q.all(prom).then(function () {
             callback();
         });
-        deferred.resolve();
+    };
+
+    $scope.pushResults = function(callback) {
+        $scope.results.length = 0;
+        var prom = [];
+        $scope.albums.forEach(function (obj, i) {
+            $scope.resultsList.forEach(function (result, i) {
+                if(obj.id == result){
+                    var promise = 
+                    $scope.results.push(obj);
+                    prom.push(promise);
+                }
+            });
+        });
+        $q.all(prom).then(function () {
+            callback();
+        });
     };
     
-    $scope.updateResults = function(i) {
-        $scope.toggleFilter(i, function(){
-            $scope.pushResults(function(){
-            
+    $scope.updateResults = function(id) {
+        $scope.toggleFilter(id, function(){
+            $scope.getAlbums(function(){
+                $scope.pushResultsList(function(){
+                    $scope.pushResults(function(){
+                    });
+                });
             });
         });
     };
 
-    $scope.toggleFilter = function(i, callback) {
-        Imgur.toggleFilter($scope.albumsList, i, function(value){
+    $scope.toggleFilter = function(id, callback) {
+        Imgur.toggleFilter($scope.albumsList, id, function(value){
             $scope.albumsList = value;
             callback();
         });
@@ -87,33 +110,19 @@ angular.module('myApp.controllers', []).
         });
     };
     
-    $scope.init = function(user) {
-        $scope.getAlbumsList(user, function(){
-            console.log('getAlbumsList');
-            console.log($scope.albumsList);
-            
+    $scope.init = function(callback) {
+        $scope.getAlbumsList(function(){
             $scope.pushProperties(function(){
-                console.log('pushProperties');
-                console.log($scope.albumsList);
-                
-                $scope.toggleFilter(0, function(){
-                    console.log('toggleFilter');
-                    console.log($scope.albumsList);
-
-                    $scope.getAlbums(user, function(){
-                        console.log('getAlbums');
-                        console.log($scope.albums);
-                        
-                        $scope.pushResults(function(){
-                           console.log('pushResults');
-                           console.log($scope.results); 
-                        });            
-                    });
-                });
+                callback();
             });
         });
     };
 
-    $scope.init('chop655');
+    $scope.init(function(){
+        // Config stuff goes here!
+        $scope.updateResults('hnNol', function(){
+
+        });
+    });
     
   }]);
