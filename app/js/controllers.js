@@ -7,18 +7,18 @@ angular.module('myApp.controllers', []).
     $scope.isCollapsed = true;
   }])
   .controller('Filters', ['$scope','$q','Imgur', function($scope, $q, Imgur) {
-    
+
     $scope.albums = [];
     $scope.albumsList = [];
     $scope.results = [];
     $scope.resultsList = [];
     $scope.images = [];
-    
+
     $scope.getAlbumsList = function(callback) {
         Imgur.albumsList.get(    
             function(value) {
                 $scope.albumsList = value.data;
-                return callback();
+                return (callback?callback():null);
             }
         );
     }
@@ -49,7 +49,7 @@ angular.module('myApp.controllers', []).
         });
         
         $q.all(prom).then(function () {
-            callback();
+            (callback?callback():null);
         });
     };
 
@@ -64,7 +64,7 @@ angular.module('myApp.controllers', []).
             }
         });
         $q.all(prom).then(function () {
-            callback();
+            (callback?callback():null);
         });
     };
 
@@ -81,7 +81,7 @@ angular.module('myApp.controllers', []).
             });
         });
         $q.all(prom).then(function () {
-            callback();
+            (callback?callback():null);
         });
     };
 
@@ -96,17 +96,17 @@ angular.module('myApp.controllers', []).
             });
         });
         $q.all(prom).then(function () {
-            callback();
+            (callback?callback():null);
         });
     };
-    
-    $scope.updateResults = function(id) {
+
+    $scope.updateResults = function(id, callback) {
         $scope.toggleFilter(id, function(){
             $scope.getAlbums(function(){
                 $scope.pushResultsList(function(){
                     $scope.pushResults(function(){
                         $scope.pushImages(function(){
-                            
+                            (callback?callback():null);
                         });
                     });
                 });
@@ -117,38 +117,37 @@ angular.module('myApp.controllers', []).
     $scope.toggleFilter = function(id, callback) {
         Imgur.toggleFilter($scope.albumsList, id, function(value){
             $scope.albumsList = value;
-            callback();
+            (callback?callback():null);
         });
     };
-    
-    
+
     $scope.pushProperties = function(callback) {
         Imgur.pushProperties($scope.albumsList, function(value){
             $scope.albumsList = value;
-            callback();
+            (callback?callback():null);
         });
     };
-    
+
     $scope.loadMore = function() {
       var last = $scope.images[$scope.images.length - 1];
       for(var i = 1; i <= 8; i++) {
         $scope.images.push(last + i);
       }
     };
-  
+
     $scope.init = function(callback) {
         $scope.getAlbumsList(function(){
             $scope.pushProperties(function(){
-                callback();
+                (callback?callback():null);
             });
         });
     };
 
     $scope.init(function(){
         // Config stuff goes here!
-        //$scope.updateResults('hnNol', function(){
+        $scope.updateResults('g7mv8', function(){
 
-        //});
+        });
     });
-    
+
   }]);
