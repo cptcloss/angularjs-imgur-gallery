@@ -12,6 +12,7 @@ angular.module('myApp.controllers', []).
     $scope.albumsList = [];
     $scope.results = [];
     $scope.resultsList = [];
+    $scope.images = [];
     
     $scope.getAlbumsList = function(callback) {
         Imgur.albumsList.get(    
@@ -83,12 +84,30 @@ angular.module('myApp.controllers', []).
             callback();
         });
     };
+
+    $scope.pushImages = function(callback) {
+        $scope.images.length = 0;
+        var prom = [];
+        $scope.results.forEach(function (obj) {
+            obj.images.forEach(function (image) {
+                var promise = 
+                $scope.images.push(image);
+                prom.push(promise);
+            });
+        });
+        $q.all(prom).then(function () {
+            callback();
+        });
+    };
     
     $scope.updateResults = function(id) {
         $scope.toggleFilter(id, function(){
             $scope.getAlbums(function(){
                 $scope.pushResultsList(function(){
                     $scope.pushResults(function(){
+                        $scope.pushImages(function(){
+                            
+                        });
                     });
                 });
             });
@@ -110,6 +129,13 @@ angular.module('myApp.controllers', []).
         });
     };
     
+    $scope.loadMore = function() {
+      var last = $scope.images[$scope.images.length - 1];
+      for(var i = 1; i <= 8; i++) {
+        $scope.images.push(last + i);
+      }
+    };
+  
     $scope.init = function(callback) {
         $scope.getAlbumsList(function(){
             $scope.pushProperties(function(){
@@ -120,9 +146,9 @@ angular.module('myApp.controllers', []).
 
     $scope.init(function(){
         // Config stuff goes here!
-        $scope.updateResults('hnNol', function(){
+        //$scope.updateResults('hnNol', function(){
 
-        });
+        //});
     });
     
   }]);

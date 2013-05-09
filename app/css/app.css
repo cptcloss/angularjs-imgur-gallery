@@ -5,19 +5,11 @@
 }
 
 .masonry .masonry-item {
- width: 220px;
+ width: 150px;
  margin: 10px;
  float: left;
 }
 
-.masonry-item img {
- width: 220px;   
-}
-
-.item {
-    float: left;
-    margin: 5px;
-}
-.item img{
-  width:150px;
+.masonry-item img{
+ width: 150px;
 }

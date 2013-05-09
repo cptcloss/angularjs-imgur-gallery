@@ -9,19 +9,22 @@ angular.module('myApp.directives', []).
       elm.text(version);
     };
   }])
-  .directive("myDirective", function() {
-      return {
-          restrict: 'E'
-      };
+  .directive("masonry", function($parse) {
+    return {
+      restrict: 'AC',
+      link: function (scope, elem, attrs) {
+        elem.masonry({ itemSelector: '.masonry-item', columnWidth: $parse(attrs.masonry)(scope) });
+      }
+    };     
   })
-  .directive('checkLast', function () {
-          return function (scope, element, attrs) {
-              
-              if (scope.$last=== true) { //wait for last item in the iterator
-                  element.ready(function () {
-                     $('#container').masonry({ columnWidth: 60});
-                      
-                  })
-              }
-          }
-      });
+  .directive('masonryItem', function ($compile) {
+    return {
+      restrict: 'AC',
+      link: function (scope, elem, attrs) {
+        elem.html($compile(elem.html().trim())(scope));
+        elem.imagesLoaded(function () {      
+          elem.parents('.masonry').masonry('reload');
+        });
+      }
+    };    
+  });

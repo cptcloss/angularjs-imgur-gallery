@@ -11,12 +11,19 @@ angular.module('myApp.services', ['ngResource']).
     $http.defaults.useXDomain = true;
     $http.defaults.headers.common['Authorization'] = 'Client-ID 0823c1380a41001';
     return {
-        albumsList : $resource('https://api.imgur.com/3/account/chop655/albums'),
-        album : $resource('https://api.imgur.com/3/account/chop655/album/:id'),
+        albumsList : $resource('https://api.imgur.com/3/account/HamsterYi/albums'),
+        album : $resource('https://api.imgur.com/3/account/HamsterYi/album/:id'),
         pushProperties : function (albumsList, callback) {
             albumsList.forEach(function (obj) {
-                obj.active=false;
-                obj.get=false;
+                var a = "active";
+                var b = false;
+                var c = "get";
+                var d = false;
+                
+                obj[a]=b;
+                obj[c]=d;
+                //obj.active=false;
+                //obj.get=false;
             });
             return callback(albumsList);
         },

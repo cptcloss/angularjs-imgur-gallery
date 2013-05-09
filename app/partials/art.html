@@ -12,10 +12,10 @@
     </div>
     <div class="row">
         <div class="span12">
-            <div class="container">
-                <div ng-repeat="album in results">
-                    <div class="item" myDirective check-last ng-repeat="image in album.images">
-                        <img src="{{image.link}}" />
+            <div class="container ">
+                <div class="masonry:75;">
+                    <div class="masonry-item" ng-repeat="image in images">
+                        <img ng-src="{{image.link}}"/>
                     </div>
                 </div>
             </div>
