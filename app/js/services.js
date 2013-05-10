@@ -13,24 +13,33 @@ angular.module('myApp.services', ['ngResource']).
     return {
         albumsList : $resource('https://api.imgur.com/3/account/HamsterYi/albums'),
         album : $resource('https://api.imgur.com/3/account/HamsterYi/album/:id'),
-        pushProperties : function (albumsList, callback) {
+        pushAlbumsListProperties : function (albumsList, callback) {
             albumsList.forEach(function (obj) {
-                var a = "active";
-                var b = false;
-                var c = "get";
-                var d = false;
-                
-                obj[a]=b;
-                obj[c]=d;
-                //obj.active=false;
-                //obj.get=false;
+                obj.active=false;
+                obj.get=false;
             });
             return callback(albumsList);
         },
-        toggleFilter : function (albumsList, id, callback) {
+        pushAlbumImagesProperties : function (album, callback) {
+            album.images.forEach(function (image) {
+                image.pool=false;
+                image.albumID=album.id;
+                image.albumTitle=album.title;
+            });
+            return callback(album);
+        },
+        toggleAlbumActive : function (albumsList, id, callback) {
             albumsList.forEach(function (obj) {
                 if(obj.id == id){
                     obj.active = (obj.active===false)?true:false;
+                }
+            });
+            return callback(albumsList);
+        },
+        toggleAlbumGet : function (albumsList, id, callback) {
+            albumsList.forEach(function (obj) {
+                if(obj.id == id){
+                    obj.get = (obj.get===false)?true:false;
                 }
             });
             return callback(albumsList);
