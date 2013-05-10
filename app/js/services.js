@@ -11,6 +11,10 @@ angular.module('myApp.services', ['ngResource']).
     $http.defaults.useXDomain = true;
     $http.defaults.headers.common['Authorization'] = 'Client-ID 0823c1380a41001';
     return {
+        
+        // need locking mechanism
+        // mabye becomes implimentation with infinite scroll?
+        
         albumsList : $resource('https://api.imgur.com/3/account/HamsterYi/albums'),
         album : $resource('https://api.imgur.com/3/account/HamsterYi/album/:id'),
         pushAlbumsListProperties : function (albumsList, callback) {
@@ -39,7 +43,7 @@ angular.module('myApp.services', ['ngResource']).
         toggleAlbumGet : function (albumsList, id, callback) {
             albumsList.forEach(function (obj) {
                 if(obj.id == id){
-                    obj.get = (obj.get===false)?true:false;
+                    obj.get = true;
                 }
             });
             return callback(albumsList);

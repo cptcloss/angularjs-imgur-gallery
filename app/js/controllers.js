@@ -12,8 +12,8 @@ angular.module('myApp.controllers', []).
     $scope.albumsList = [];
     $scope.results = [];
     $scope.resultsList = [];
-    $scope.images = [];
-    $scope.maxImagesPerLoad = 10;
+    $scope.pool = [];
+    $scope.poolList = [];
     
     $scope.getAlbumsList = function(callback) {
         Imgur.albumsList.get(    
@@ -42,9 +42,10 @@ angular.module('myApp.controllers', []).
             if((obj.active === true)&&(obj.get === false)){
                 var promise =
                 $scope.getAlbum(obj.id, function(album){
-                    $scope.pushAlbumImagesProperties(album, function(value){
-                        $scope.albums.push(value);
-                        obj.get = true;
+                    $scope.toggleAlbumGet(obj.id, function(){
+                        $scope.pushAlbumImagesProperties(album, function(value){
+                            $scope.albums.push(value);
+                        });
                     });
                 });
                 prom.push(promise);
@@ -103,33 +104,75 @@ angular.module('myApp.controllers', []).
         });
     };
     
-    $scope.pushImages_EvenDis = function(callback) {
-        $scope.getMaxAlbumsImages();
-        $scope.getDisNum();
+    $scope.subArrays = function(a, b)
+    {
+        if (a == undefined){ a = []};
+        if (b == undefined){ b = []};
+        return a.filter(function ( name ) {
+            return b.indexOf( name ) === -1;
+        });
+    }
+
+    $scope.popPoolImageByID = function(callback) {
+        var popList = $scope.subArrays($scope.poolList, $scope.resultsList);
         
+        for(var i = 0; i < $scope.pool.length; i++) {
+            var obj = $scope.pool[i];
+        
+            if(popList.indexOf(obj.albumID) !== -1) {
+                $scope.pool.splice(i, 1);
+                i--;
+            }
+        }    
+
+        callback();
+    };
+    
+    $scope.pushPoolImageByID = function(callback) {
+        var pushList = $scope.subArrays($scope.resultsList, $scope.poolList);
+        $scope.results.forEach(function (album) {
+            album.images.forEach(function (image) {
+                pushList.forEach(function (albumID) {
+                    if(image.albumID == albumID){
+                        $scope.pool.push(image);
+                    }
+                });
+            });
+        });
+        callback();
+    };
+    
+    $scope.syncPoolResults = function(callback) {
+        $scope.popPoolImageByID(function(){
+            $scope.pushPoolImageByID(function(){
+                var copy = $scope.resultsList.slice(0);
+                $scope.poolList = copy;
+                (callback?callback():null);
+            });        
+        });
+    };
+    
+    $scope.pushImages_EvenDis = function(callback) {
+        //$scope.getMaxAlbumsImages();
+        //$scope.getDisNum();
+        
+        
+        $scope.syncPoolResults(function(){
+            (callback?callback():null);
+        });
+        
+      
         // If the number of albums is greater than the number of images per request:
         // - randomize album selection each time.
         // 
         //      ::: POOL PARTY!!!
         //
-        //      * albums must addProperties(pool,albumID,title) to all images                           <------------------ Done
-        //      * pool invoked on page load after albums are pushed to results
-        //      * Sync poolList and resultsList
+        //      * addProperties(pool,albumID,title) to every image in album.images                           <------------------ Done
+        //      * Sync poolList and resultsList                                                              <------------------ Working On
         //          - diff poolList & resultsList
         //          - pushList[]
         //          - popList[]
         //          - http://jsfiddle.net/gigablox/rZ5fS/
-        
-        //      * fn() = images.push(random(pool, numImagesPerLoad)); images in pool (que = false)
-        //      * ++ total available
-        //      * next data call
-        //      * fn();
-        //      * update filter, remove pool 1
-        //      * foreach pool.image pop image with album (id)
-        //      * update filter, add pool 11
-        //      * push album images into pool
-        
-        //$scope.maxImagesPerAlbum = ($scope.maxImagesPerLoad<resultsList.length?1:2)
     };
 
     $scope.getDisNum = function(callback) {
@@ -163,15 +206,17 @@ angular.module('myApp.controllers', []).
                 $scope.pushResultsList(function(){
                     $scope.pushResults(function(){
                         // Even Distribution Algorithm
-                        //$scope.pushImages_EvenDis(function(){
-                        //});                   
+                        $scope.pushImages_EvenDis(function(){
+                            
+                            return (callback?callback():null);
+                        });                   
                         
                         // First In First Out Agorithm
                         //$scope.pushImages_FIFO(function(){
                         //
                         //});
 
-                        return (callback?callback():null);
+                        
                     });
                 });
             });
@@ -185,6 +230,14 @@ angular.module('myApp.controllers', []).
         });
     };
 
+    $scope.toggleAlbumGet = function(id, callback) {
+        Imgur.toggleAlbumGet($scope.albumsList, id, function(value){
+            $scope.albumsList = value;
+            (callback?callback():null);
+        });
+    };
+    
+    
     $scope.pushAlbumsListProperties = function(callback) {
         Imgur.pushAlbumsListProperties($scope.albumsList, function(value){
             $scope.albumsList = value;
