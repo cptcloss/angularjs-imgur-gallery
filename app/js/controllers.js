@@ -173,6 +173,17 @@ angular.module('myApp.controllers', []).
         //          - pushList[]
         //          - popList[]
         //          - http://jsfiddle.net/gigablox/rZ5fS/
+        
+        //      * fn() = images.push(random(pool, numImagesPerLoad)); images in pool (que = false)
+        //      * ++ total available
+        //      * next data call
+        //      * fn();
+        //      * update filter, remove pool 1
+        //      * foreach pool.image pop image with album (id)
+        //      * update filter, add pool 11
+        //      * push album images into pool
+        
+        //$scope.maxImagesPerAlbum = ($scope.maxImagesPerLoad<resultsList.length?1:2)
     };
 
     $scope.getDisNum = function(callback) {
