@@ -13,8 +13,8 @@
     <div class="row">
         <div class="span12">
             <div class="container">
-                <div class="masonry;">
-                    <div class="masonry-brick" ng-repeat="image in pool">
+                <div class="masonry" infinite-scroll='disPool()' infinite-scroll-distance='0'>
+                    <div class="masonry-brick" ng-repeat="image in pool | filter:{pool:true}">
                         <span>{{image.albumTitle|truncate}}</span>
                         <img ng-src="{{image.link|imageSize:t}}"/>
                     </div>

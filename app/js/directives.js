@@ -3,12 +3,7 @@
 /* Directives */
 
 
-angular.module('myApp.directives', []).
-  directive('appVersion', ['version', function(version) {
-    return function(scope, elm, attrs) {
-      elm.text(version);
-    };
-  }])
+angular.module('myApp.directives', [])
   .directive("masonry", function($parse) {
     return {
       restrict: 'AC',
@@ -26,7 +21,7 @@ angular.module('myApp.directives', []).
       link: function (scope, elem, attrs) {
         scope.$watch('$index',function(v){
           elem.imagesLoaded(function () {
-            elem.parents('.masonry').masonry('reload');
+            elem.parents('.masonry').masonry('reload', elem);
           });
         });
       }

@@ -104,8 +104,7 @@ angular.module('myApp.controllers', []).
         });
     };
     
-    $scope.subArrays = function(a, b)
-    {
+    $scope.subArrays = function(a, b){
         if (a == undefined){ a = []};
         if (b == undefined){ b = []};
         return a.filter(function ( name ) {
@@ -123,9 +122,8 @@ angular.module('myApp.controllers', []).
                 $scope.pool.splice(i, 1);
                 i--;
             }
-        }    
-
-        callback();
+        }
+        (callback?callback():null);
     };
     
     $scope.pushPoolImageByID = function(callback) {
@@ -139,7 +137,7 @@ angular.module('myApp.controllers', []).
                 });
             });
         });
-        callback();
+        (callback?callback():null);
     };
     
     $scope.syncPoolResults = function(callback) {
@@ -152,90 +150,61 @@ angular.module('myApp.controllers', []).
         });
     };
     
+    $scope.rand = function(min,max){
+        return Math.floor(Math.random()*(max-min+1)+min);
+    }
+
+    $scope.disPool = function(callback) {    
+        var poolCount = 0;
+        var x = $scope.pool.length-1;
+        $scope.pool.forEach(function(image){
+            if(image.pool === false){
+                poolCount ++;
+            }
+        });
+        var remPossible = (poolCount<20?poolCount:20);
+        var i = 0;
+        while(i<remPossible){
+            var z = $scope.rand(0,x);
+            console.log(z)
+            if($scope.pool[z].pool===false){
+                $scope.pool[z].pool = true;
+                i++;      
+            };
+        }
+        (callback?callback():null);
+    };
+    
     $scope.pushImages_EvenDis = function(callback) {
-        //$scope.getMaxAlbumsImages();
-        //$scope.getDisNum();
-        
-        
         $scope.syncPoolResults(function(){
-            (callback?callback():null);
+            $scope.disPool(function(){
+                return (callback?callback():null);
+            });            
         });
-        
-      
-        // If the number of albums is greater than the number of images per request:
-        // - randomize album selection each time.
-        // 
-        //      ::: POOL PARTY!!!
-        //
-        //      * addProperties(pool,albumID,title) to every image in album.images                           <------------------ Done
-        //      * Sync poolList and resultsList                                                              <------------------ Working On
-        //          - diff poolList & resultsList
-        //          - pushList[]
-        //          - popList[]
-        //          - http://jsfiddle.net/gigablox/rZ5fS/
-        
-        //      * fn() = images.push(random(pool, numImagesPerLoad)); images in pool (que = false)
-        //      * ++ total available
-        //      * next data call
-        //      * fn();
-        //      * update filter, remove pool 1
-        //      * foreach pool.image pop image with album (id)
-        //      * update filter, add pool 11
-        //      * push album images into pool
-        
-        //$scope.maxImagesPerAlbum = ($scope.maxImagesPerLoad<resultsList.length?1:2)
-    };
-
-    $scope.getDisNum = function(callback) {
-        $scope.maxAlbumsImages = 0;
-        $scope.results.forEach(function (album, i) {
-            $scope.maxAlbumsImages += album.images_count;
-        });
-        (callback?callback():null);
     };
     
-    $scope.getMaxAlbumsImages = function(callback){
-        $scope.maxAlbumsImages = 0;
-        $scope.results.forEach(function (album, i) {
-            $scope.maxAlbumsImages += album.images_count;
-        });
-        (callback?callback():null);
-    };
-
-    /*
-    $scope.getMaxAlbumImages = function(callback){
-        $scope.maxAlbumImages = 0;
-        $scope.album.forEach(function (album, i) {
-            $scope.maxAlbumImages.push(album.images_count);
-        });
-    };
-    */
-    
-    $scope.updateResults = function(id, callback) {
-        $scope.toggleAlbumActive(id, function(){
+    $scope.updateResults = function(ids, callback) {
+        $scope.toggleAlbumActive(ids, function(){
             $scope.getAlbums(function(){
                 $scope.pushResultsList(function(){
                     $scope.pushResults(function(){
-                        // Even Distribution Algorithm
+                        // Even Distribution
                         $scope.pushImages_EvenDis(function(){
-                            
-                            return (callback?callback():null);
+                            (callback?callback():null);
                         });                   
                         
-                        // First In First Out Agorithm
+                        // First In First Out
                         //$scope.pushImages_FIFO(function(){
                         //
                         //});
-
-                        
                     });
                 });
             });
         });
     };
 
-    $scope.toggleAlbumActive = function(id, callback) {
-        Imgur.toggleAlbumActive($scope.albumsList, id, function(value){
+    $scope.toggleAlbumActive = function(ids, callback) {
+        Imgur.toggleAlbumActive($scope.albumsList, ids, function(value){
             $scope.albumsList = value;
             (callback?callback():null);
         });
@@ -247,7 +216,6 @@ angular.module('myApp.controllers', []).
             (callback?callback():null);
         });
     };
-    
     
     $scope.pushAlbumsListProperties = function(callback) {
         Imgur.pushAlbumsListProperties($scope.albumsList, function(value){
@@ -261,15 +229,6 @@ angular.module('myApp.controllers', []).
             return (callback?callback(value):null);
         });
     };
-    
-    // loadMore() :::
-    // Not Yet implimented, will be used for infinite scroll!
-    $scope.loadMore = function() {
-      var last = $scope.images[$scope.images.length - 1];
-      for(var i = 1; i <= 8; i++) {
-        $scope.images.push(last + i);
-      }
-    };
 
     $scope.init = function(callback) {
         $scope.getAlbumsList(function(){
@@ -281,9 +240,8 @@ angular.module('myApp.controllers', []).
 
     $scope.init(function(){
         // Config stuff goes here!
-        $scope.updateResults('g7mv8', function(){
-            
+        $scope.updateResults(null, function(){
+
         });
     });
-
   }]);
