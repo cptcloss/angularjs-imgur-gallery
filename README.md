@@ -7,11 +7,11 @@ Art gallery app using AngularJS with Imgur API version 3. The `$resource` calls 
 * Stable for preview in FireFox and Chrome
 
 ## Features
-* Bootstrap for UI.
-* Masonry on images container.
-* Infinite Scroll on current result set.
+* [Angular-Bootstrap](http://angular-ui.github.io/bootstrap/) for UI.
+* [Masonry.js](http://masonry.desandro.com/) on images container.
+* [ngInfiniteScroll](http://binarymuse.github.io/ngInfiniteScroll/) on current result set.
 * Even distribution algorithm for image que over all albums.
-* Filters by album, default filters can be passed on initialization.
+* Filters by album, filters can be passed on initialization, default is all.
 
 ## Getting Started
 
