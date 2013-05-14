@@ -11,7 +11,9 @@
  margin:5px;
  float: left;
 }
-
+.masonry-brick img{
+ width: 270px;
+}
 /**** Masonry Transitions ****/
 
 .masonry,
