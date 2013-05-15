@@ -3,9 +3,6 @@
 /* Controllers */
 
 angular.module('myApp.controllers', []).
-  controller('CollapseDemoCtrl', ['$scope', function($scope) {
-    $scope.isCollapsed = true;
-  }]).
   controller('Filters', ['$scope','Imgur', function($scope, Imgur) {
   
     $scope.filterByAlbum = function(ids) {

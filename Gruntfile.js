@@ -13,6 +13,7 @@ module.exports = function(grunt) {
           'build/production/js/app.js':['build/_compile/js/jquery.min.js',
                                         'build/_compile/js/angular.js',
                                         'build/_compile/js/angular-resource.js',
+                                        'build/_compile/js/ui-bootstrap.min.js',
                                         'build/_compile/js/*.js',],
         }
       }
@@ -140,6 +141,9 @@ module.exports = function(grunt) {
                         'build/development/js/jquery.min.js',
                         'build/development/js/angular.js',
                         'build/development/js/angular-resource.js',
+                        'build/development/js/jquery.masonry.min.js',
+                        'build/development/js/nginfinitescroll.js',
+                        'build/development/js/ui-bootstrap.min.js',
                         'build/development/js/*.js',            
                     ]
                 },
