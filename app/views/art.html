@@ -1,0 +1,22 @@
+<div class="row" ng-controller="Filters">
+    <div class="span12">
+        <ul class="nav nav-pills">
+            <li ng-repeat="album in albumsList" ng-class="{active:album.active}" ng-click="filterByAlbum(album.id)">
+                <a href="#">
+                    {{album.title}}
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="row" ng-controller="Results">
+    <div class="span12">
+        <div class="container">
+            <div class="masonry" infinite-scroll='getMore()' infinite-scroll-distance='1'>
+                <div class="masonry-brick" ng-repeat="image in pool | filter:{pool:true}">
+                    <img ng-src="{{image.link|imageSize:t}}"/>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

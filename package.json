@@ -1,19 +1,14 @@
 {
   "name": "UICoreSeed",
-  "app": "app",
-  "partials":"partials",
-  "js":"js",
-  "css":"css",
-  "less":"less",
   "version": "0.1.0",
   "devDependencies": {
+    "bower":"latest",
     "grunt": "latest",
+    "grunt-contrib-copy": "latest",
     "grunt-contrib-uglify": "latest",
-    "grunt-contrib-concat": "latest",
-    "grunt-assetpush":"latest",
     "grunt-contrib-less":"latest",
     "grunt-contrib-clean":"latest",
-    "grunt-contrib-cssmin":"latest",
-    "grunt-image-embed":"latest"
+    "grunt-html-build":"latest",
+    "grunt-contrib-watch":"latest"
   }
 }
