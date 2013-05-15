@@ -3,12 +3,16 @@ module.exports = function(grunt) {
   grunt.initConfig({
     bowerConfig: grunt.file.readJSON('.bowerrc'),
     uglify: {
+      options: {
+        mangle: false
+      },
       prod:{  
         files: {
           // Bundle order can be acheived with globbing patterns.
           // See: https://github.com/gruntjs/grunt/wiki/Configuring-tasks#globbing-patterns
           'build/production/js/app.js':['build/_compile/js/jquery.min.js',
-                                        'build/_compile/js/angular.min.js',
+                                        'build/_compile/js/angular.js',
+                                        'build/_compile/js/angular-resource.js',
                                         'build/_compile/js/*.js',],
         }
       }
