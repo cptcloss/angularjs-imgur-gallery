@@ -18,6 +18,6 @@ Art gallery app using AngularJS with Imgur API version 3. The `$resource` calls 
 Pull down and point your vhost to `/app`  
 No dependencies required.
 
-## Lisence
+## License
 
 Copyright (c) 2013 Daniel Kanze (@gigablox) Licensed under the MIT License.
