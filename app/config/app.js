@@ -6,6 +6,5 @@ angular.module('myApp', ['myApp.filters', 'myApp.services', 'myApp.directives', 
   config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
     $locationProvider.html5Mode(true);
     $routeProvider.when('/', {templateUrl: 'views/art.html'});
-    $routeProvider.when('/art', {templateUrl: 'views/art.html'});
     $routeProvider.otherwise({redirectTo: '/'});
   }]);
