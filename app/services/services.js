@@ -6,7 +6,7 @@
 // Demonstrate how to register services
 // In this case it is a simple value service.
 angular.module('myApp.services', ['ngResource']).
-  factory('Imgur', function($resource, $http, $q, subArraysFilter, randFilter) {
+  factory('Imgur', function($resource, $http, $q, $rootScope, subArraysFilter, randFilter) {
     
     $http.defaults.useXDomain = true;
     $http.defaults.headers.common['Authorization'] = 'Client-ID 0823c1380a41001';
@@ -53,7 +53,7 @@ angular.module('myApp.services', ['ngResource']).
     /**************************************************************
      *  Object Filters
      **************************************************************/
-    imgurService.filterByAlbum = function(ids, callback) {
+    imgurService.filterByAlbum = function(ids) {
       imgurService.toggleAlbumActive(ids);
       imgurService.albums(function(){
           imgurService.resultsList();
@@ -62,7 +62,7 @@ angular.module('myApp.services', ['ngResource']).
           imgurService.pushPoolImageByID();
           imgurService.syncPoolList();
           imgurService.syncPool();
-          callback();
+          $rootScope.$broadcast('updatePool');
       });
     };    
      
