@@ -1,7 +1,7 @@
 <div class="row" ng-controller="Filters">
     <div class="span12">
         <ul class="nav nav-pills">
-            <li ng-repeat="album in albumsList" ng-class="{active:album.active}" ng-click="filterByAlbum(album.id)">
+            <li ng-repeat="album in albumsList" ng-class="{active:album.active}" ng-click="filterAlbum(album.id)">
                 <a href="#">
                     {{album.title}}
                 </a>

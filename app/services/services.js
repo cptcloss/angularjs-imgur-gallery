@@ -13,85 +13,95 @@ angular.module('myApp.services', ['ngResource']).
     var imgurService = {};
     var albumsList = [];
     var albums = [];
-    var resultsList = [];
-    var results = [];
     var poolList = [];
     var pool = [];
+    var filter = ["v6mxV", "Xx3EL"]; //needs to get abstracted out to config level.
 
     /**************************************************************
      *  Build Objects
      **************************************************************/
-    imgurService.albumsList = function(callback) {
+    imgurService.getAlbumsList = function(callback) {
       $resource('https://api.imgur.com/3/account/zdepthcharge/albums').get().$then(
         function(value){
           albumsList = value.data.data;
-          imgurService.pushAlbumsListProperties();
+          imgurService.pushAlbumsListProperties(value.data.data);
+          $rootScope.$broadcast('updateAlbumsList');
           callback();
         }
       );
     };
     
-    imgurService.albums = function(callback) {
+    imgurService.getAlbums = function() {
       var prom = [];
-      albumsList.forEach(function (obj) {
-        if((obj.active === true)&&(obj.get === false)){
-          var promise = $resource('https://api.imgur.com/3/account/zdepthcharge/album/:id').get({id:obj.id}).$then(
-            function(album){
-              imgurService.toggleAlbumGet(obj.id);
-              imgurService.pushAlbumImagesProperties(album.data.data);
-              albums.push(album.data.data);
+      albumsList.forEach(function (album) {
+        if(!imgurService.recieveAlbum(album.id) && (album.active == true)){
+          var promise = $resource('https://api.imgur.com/3/account/zdepthcharge/album/:id').get({id:album.id}).$then(
+            function(value){
+              imgurService.pushAlbumImagesProperties(value.data.data);
+              albums.push(value.data.data);
             }
           );
           prom.push(promise);
         }
       });
       $q.all(prom).then(function () {
-        callback();
+        imgurService.popPoolImageByID();
+        imgurService.pushPoolImageByID();
+        imgurService.syncPoolList();
+        imgurService.syncPool();
+        $rootScope.$broadcast('updatePool');
       });
     };
 
     /**************************************************************
      *  Object Filters
      **************************************************************/
-    imgurService.filterByAlbum = function(ids) {
-      imgurService.toggleAlbumActive(ids);
-      imgurService.albums(function(){
-          imgurService.resultsList();
-          imgurService.results();
-          imgurService.popPoolImageByID();
-          imgurService.pushPoolImageByID();
-          imgurService.syncPoolList();
-          imgurService.syncPool();
-          $rootScope.$broadcast('updatePool');
-      });
+    imgurService.loadFilters = function() {
+      imgurService.loadAlbumFilter();
+      imgurService.getAlbums();
+    };
+    
+    imgurService.filterAlbum = function(id) {
+      imgurService.toggleAlbumActive(id);
+      imgurService.updateAlbumFilter();
+      imgurService.getAlbums();
     };    
      
     /**************************************************************
      *  Object Methods
      **************************************************************/
-    imgurService.resultsList = function(callback) {
-      resultsList.length = 0;
-      albumsList.forEach(function (obj) {
-        if((obj.active === true)&&(obj.get === true)) {
-          resultsList.push(obj.id);
-        }
+    imgurService.returnAlbumsIdsList = function() {
+      var albumsIdsList = [];
+      albumsList.forEach(function(album){
+        albumsIdsList.push(album.id);
       });
-    };
-
-    imgurService.results = function(callback) {
-      results.length = 0;
-      albums.forEach(function (obj) {
-        resultsList.forEach(function(result) {
-          if(obj.id == result){
-            results.push(obj);
-          }
-        });
-      });
+      return albumsIdsList;
     };
     
+    
+    imgurService.recieveAlbum = function(id) {
+      var status = false;
+      albums.forEach(function(album){
+        if(album.id === id){
+          status = true;
+        }
+      });
+      return status;
+    };
+
     imgurService.syncPoolList = function() {
-      var copy = resultsList.slice(0);
+      var copy = imgurService.probeActive();
       poolList = copy;
+    };
+    
+    imgurService.probeActive = function() {
+      var active = [];
+      albumsList.forEach(function(album){
+        if(album.active === true){
+          active.push(album.id);
+        }
+      });
+      return active;
     };
     
     imgurService.syncPool = function() {
@@ -112,14 +122,6 @@ angular.module('myApp.services', ['ngResource']).
         };
       }
     };
-    
-    imgurService.toggleAlbumGet = function(id) {
-      albumsList.forEach(function (obj) {
-        if(obj.id == id){
-          obj.get = true;
-        }
-      });
-    };
 
     imgurService.pushAlbumImagesProperties = function(album) {
       album.images.forEach(function (image) {
@@ -130,33 +132,47 @@ angular.module('myApp.services', ['ngResource']).
     };
 
     imgurService.pushAlbumsListProperties = function() {
+      albumsList.forEach(function (album){
+        album.active = false;
+      });
+    };
+
+    imgurService.loadAlbumFilter = function() {
+      if(filter.length == 0){
+        albumsList[0].active = true;
+        filter.push(albumsList[0].id);
+      }
+      else{
+        albumsList.forEach(function (album) {
+          filter.forEach(function (id) {
+            if(id == album.id){
+              album.active = true;
+            }
+          });
+        });
+      }
+    };
+
+    imgurService.updateAlbumFilter = function() {
+      filter.length = 0;
       albumsList.forEach(function (obj) {
-          obj.active=false;
-          obj.get=false;
+        if(obj.active === true){
+          filter.push(obj.id);
+        }
       });
     };
     
-    imgurService.toggleAlbumActive = function(ids) {
-      if (ids == undefined){
-          ids = [];
-          albumsList.forEach(function (obj) {
-              ids.push(obj.id);
-          });
-      };
-      if( typeof ids === 'string' ) {
-          ids = [ids];
-      }
-      ids.forEach(function (id) {
-          albumsList.forEach(function (obj) {
-              if(obj.id == id){
-                  obj.active = (obj.active===false)?true:false;
-              }
-          });
+    imgurService.toggleAlbumActive = function(id) {
+      albumsList.forEach(function (obj) {
+          if(obj.id == id){
+            obj.active = (obj.active===false)?true:false;
+          }
       });
     };
 
     imgurService.popPoolImageByID = function() {
-      var popList = subArraysFilter(poolList, resultsList);
+      var active = imgurService.probeActive();
+      var popList = subArraysFilter(poolList, active);
       for(var i = 0; i < pool.length; i++) {
         var obj = pool[i];
         if(popList.indexOf(obj.albumID) !== -1) {
@@ -167,8 +183,9 @@ angular.module('myApp.services', ['ngResource']).
     };
 
     imgurService.pushPoolImageByID = function() {
-      var pushList = subArraysFilter(resultsList, poolList);
-      results.forEach(function (album) {
+      var active = imgurService.probeActive();
+      var pushList = subArraysFilter(active, poolList);
+      albums.forEach(function (album) {
         album.images.forEach(function (image) {
           pushList.forEach(function (albumID) {
             if(image.albumID == albumID){
@@ -189,15 +206,7 @@ angular.module('myApp.services', ['ngResource']).
     imgurService.returnAlbums = function() {
       return albums;
     };
-
-    imgurService.returnResultsList = function() {
-      return resultsList;
-    };
-
-    imgurService.returnResults = function() {
-      return results;
-    };
-
+    
     imgurService.returnPoolList = function() {
       return poolList;
     };
