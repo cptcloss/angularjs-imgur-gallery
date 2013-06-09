@@ -1,4 +1,4 @@
-# Angular Imgur Gallery
+# AngularJS Imgur Gallery
 
 Art gallery app using AngularJS with Imgur API version 3. The `$resource` calls up to date with 1.1.4 promise api.
 
